@@ -17,7 +17,7 @@
 从 GitHub 安装（pnpm 会在安装时通过 `prepare` 脚本构建本包；若 pnpm 拦截构建脚本，按 CLI 提示把 `dsh-cost` 加入 profile 目录下 `pnpm-workspace.yaml` 的 `allowBuilds` 后重跑）：
 
 ```sh
-dsh plugin --profile web add github:<owner>/dsh-cost
+dsh plugin --profile web add github:StarBobis/dsh-cost
 ```
 
 或从本地检出安装（先打包 —— Windows 上 pnpm 会把指向盘符路径的 `link:` 规格错误地链接成坏符号链接）：

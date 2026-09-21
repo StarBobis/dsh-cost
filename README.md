@@ -17,7 +17,7 @@ Model cost metering for [DeepSeek Harness](https://github.com/deepseek-ai/deepse
 From GitHub (pnpm builds the package on install via its `prepare` script; if pnpm blocks build scripts, allow `dsh-cost` under `allowBuilds` in the profile's `pnpm-workspace.yaml` as the CLI hint suggests, then re-run):
 
 ```sh
-dsh plugin --profile web add github:<owner>/dsh-cost
+dsh plugin --profile web add github:StarBobis/dsh-cost
 ```
 
 or from a local checkout (pack first — a Windows pnpm quirk mis-links `link:` specs pointing at drive-letter paths):
