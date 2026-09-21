@@ -1,0 +1,313 @@
+.card {
+  list-style: none;
+  border-radius: 10px;
+  background: var(--bg-1, #fff);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-1, #1f2329);
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 12px;
+  color: var(--text-3, #8b8f98);
+}
+
+.pending {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--warning-bg, rgba(217, 119, 6, 0.12));
+  color: var(--warning, #d97706);
+  font-size: 11px;
+}
+
+.chevron {
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transition: transform 0.15s ease;
+  transform: rotate(180deg);
+}
+
+.body {
+  padding: 4px 14px 14px;
+  border-top: 1px solid var(--line-1, rgba(0, 0, 0, 0.08));
+}
+
+.readOnly {
+  margin: 8px 0;
+  color: var(--warning, #d97706);
+  font-size: 12px;
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: var(--text-2, #5c6068);
+}
+
+.currencyInput {
+  width: 72px;
+  padding: 4px 8px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--bg-2, #fff);
+  color: var(--text-1, #1f2329);
+}
+
+.presetsLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-1, #1f2329);
+  cursor: pointer;
+}
+
+.modelsTitle {
+  margin: 12px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2, #5c6068);
+}
+
+.editor {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.editor th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-3, #8b8f98);
+  padding: 4px 4px;
+  white-space: nowrap;
+}
+
+.editor td {
+  padding: 2px 4px;
+}
+
+.editor input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-2, #fff);
+  color: var(--text-1, #1f2329);
+}
+
+.keyInput {
+  min-width: 160px;
+}
+
+.priceInput {
+  max-width: 84px;
+}
+
+.tiersInput {
+  min-width: 140px;
+}
+
+.rowInvalid input {
+  border-color: var(--danger, #dc2626);
+}
+
+.removeButton,
+.addButton {
+  padding: 3px 10px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2, #5c6068);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.addButton {
+  margin-top: 8px;
+}
+
+.removeButton:hover,
+.addButton:hover {
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.discard,
+.resetButton,
+.save {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.discard,
+.resetButton {
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  background: transparent;
+  color: var(--text-2, #5c6068);
+}
+
+.resetButton {
+  margin-right: auto;
+}
+
+.save {
+  border: none;
+  background: var(--primary, #4f46e5);
+  color: #fff;
+}
+
+.save:disabled,
+.discard:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.failed {
+  margin: 6px 0 0;
+  color: var(--danger, #dc2626);
+  font-size: 12px;
+}
+
+.rule {
+  height: 1px;
+  margin: 14px 0 10px;
+  background: var(--line-1, rgba(0, 0, 0, 0.08));
+}
+
+.historyTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2, #5c6068);
+}
+
+.historyTotal {
+  margin-left: auto;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  margin: 8px 0;
+  color: var(--text-3, #8b8f98);
+  font-size: 12px;
+}
+
+.history {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 6px;
+}
+
+.history th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-3, #8b8f98);
+  padding: 4px 6px;
+  white-space: nowrap;
+}
+
+.history th:nth-child(n + 2),
+.history td:nth-child(n + 2) {
+  text-align: right;
+}
+
+.history td {
+  padding: 4px 6px;
+}
+
+.sessionCell {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sessionLink {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--primary, #4f46e5);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sessionLink:hover {
+  text-decoration: underline;
+}
+
+.unpricedMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--warning, #d97706);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.costCell {
+  font-weight: 500;
+}

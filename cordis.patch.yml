@@ -1,0 +1,16 @@
+# dsh-cost bundle layer: mount the cost plugin. The schema defaults ship a
+# usable configuration; prices are editable at runtime under the `dsh-cost`
+# settings namespace, or here as composition config, e.g.:
+#
+#   - id: cost
+#     name: 'dsh-cost'
+#     config:
+#       currency: CNY
+#       presets: true
+#       models:
+#         my-provider/my-model:
+#           input: 2
+#           output: 8
+- insert:
+    - id: cost
+      name: 'dsh-cost'
