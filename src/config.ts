@@ -4,24 +4,39 @@
  * import this module; it must stay dependency-free so the client compile
  * never drags host-side cordis Context merges in.
  *
+ * Prices are NOT configured here. The plugin bundles the published list
+ * prices (see `pricing.ts`); the fields below only cover the few facts a
+ * deployment can legitimately own — a model the bundle does not know, a
+ * holiday the calendar predates, and whether the background sweep runs.
+ *
  * @module dsh-cost/config
  */
 
 import type { ModelPrice } from './pricing.ts'
 
-/** Settings namespace carrying the runtime-editable price table. */
+/** Settings namespace whose card carries the price table and session history. */
 export const COST_SETTINGS_NAMESPACE = 'dsh-cost'
 
-/** Plugin config (all optional — schema defaults supply a usable table). */
+/** Plugin config (all optional). */
 export interface Config {
-  /** Currency label for display; the bundled presets are USD list prices. Defaults to `USD`. */
-  currency?: string
-  /** Whether the bundled OpenCode Zen preset prices apply. Defaults to true. */
-  presets?: boolean
   /**
-   * User price table in currency per 1M tokens, keyed by `model` or
-   * `provider/model`; overrides presets per key. A model absent here and from
-   * the presets is reported as unpriced and contributes no cost.
+   * Extra price entries in USD per 1M tokens, keyed by `model` or
+   * `provider/model`, for models the bundled table does not list (or that a
+   * deployment prices differently). These override the bundled rows per key.
+   * Composition/settings-file level only — the web UI never edits prices.
    */
   models?: Record<string, ModelPrice>
+  /**
+   * Extra Chinese public-holiday dates (`YYYY-MM-DD`, Beijing) that bill at
+   * the off-peak rate all day, for a holiday the bundled calendar predates or
+   * a date the State Council moved. Composition/settings-file level only.
+   */
+  holidays?: string[]
+  /**
+   * Whether the host sweeps the persisted session corpus in the background
+   * and folds cost checkpoints for sessions that predate the plugin (or were
+   * never opened since), so the settings history lists every session.
+   * Composition-level only. Defaults to true.
+   */
+  backfill?: boolean
 }

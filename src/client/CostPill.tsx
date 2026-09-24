@@ -14,7 +14,20 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: the session standard kit's useProjection seat.
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type { CostProjection, CostModelBreakdown } from '../projection-types.ts'
-import { bucketsCostMicros, formatCostMicros, formatTokens, resolvePrice, type PriceTable } from '../pricing.ts'
+import {
+  bucketsCostMicros,
+  bucketsCostSplitMicros,
+  formatCostMicros,
+  formatTokens,
+  hasOffPeak,
+  periodCostMicros,
+  periodCostSplitMicros,
+  PRICE_CURRENCY,
+  resolvePrice,
+  type CostSplitTotal,
+  type PriceTable,
+  type TokenBuckets,
+} from '../pricing.ts'
 import type { CostSettingsSnapshot } from './controller.ts'
 import css from './CostPill.module.css'
 
@@ -34,7 +47,8 @@ export type CostPillProps =
 
 /**
  * Live-price one breakdown row against the client table: tier-billed rows keep
- * their fold-time figure, flat rows reprice from buckets.
+ * their fold-time figure, flat rows reprice from buckets (peak rates for the
+ * row's peak share, off-peak for the rest when the model publishes both).
  * @param row - one model's view row.
  * @param table - the client's current effective price table.
  * @returns micro-unit cost, or null when the model is unpriced.
@@ -43,7 +57,60 @@ export function rowCostMicros(row: CostModelBreakdown, table: PriceTable): numbe
   const price = resolvePrice(table, row.provider, row.model)
   if (price === undefined) return null
   if (price.tiers !== undefined && price.tiers.length > 0) return row.costMicros ?? 0
-  return bucketsCostMicros(price, row)
+  if (!hasOffPeak(price)) return bucketsCostMicros(price, row)
+  return periodCostMicros(price, row, row.peak)
+}
+
+/**
+ * Live-price one breakdown row's per-bucket split against the client table:
+ * flat rows reprice each bucket from the token buckets (per period when the
+ * model publishes an off-peak row); tiered rows report their fold-time split,
+ * or null when the fold predates split tracking (the total stays known, the
+ * parts do not).
+ * @param row - one model's view row.
+ * @param table - the client's current effective price table.
+ * @returns per-bucket micro-unit costs plus their total, or null when the
+ * model is unpriced or the split is unknowable.
+ */
+export function rowCostSplitMicros(row: CostModelBreakdown, table: PriceTable): CostSplitTotal | null {
+  const price = resolvePrice(table, row.provider, row.model)
+  if (price === undefined) return null
+  if (price.tiers !== undefined && price.tiers.length > 0) {
+    // eslint-disable-next-line eqeqeq -- older hosts omit the field entirely
+    if (row.tieredSplitMicros == null) return null
+    return { ...row.tieredSplitMicros, total: row.costMicros ?? 0 }
+  }
+  if (!hasOffPeak(price)) return bucketsCostSplitMicros(price, row)
+  return periodCostSplitMicros(price, row, row.peak)
+}
+
+/**
+ * The fields every period-pricing helper reads: any row that carries token
+ * buckets, its peak share, and the model identity the table is keyed by.
+ */
+export interface PricedRow extends TokenBuckets {
+  provider: string
+  model: string
+  peak: TokenBuckets
+}
+
+/**
+ * Live-price one row's peak and off-peak shares, so a session's period mix is
+ * visible next to its total.
+ * @param row - one model's row (a view row, or a card history row).
+ * @param table - the client's current effective price table.
+ * @returns micro-unit shares, or null when the model is unpriced or bills a
+ * single rate (there is no period split to show).
+ */
+export function rowPeriodMicros(
+  row: PricedRow,
+  table: PriceTable,
+): { peak: number, offPeak: number, total: number } | null {
+  const price = resolvePrice(table, row.provider, row.model)
+  if (price === undefined || !hasOffPeak(price)) return null
+  const peak = bucketsCostMicros(price, row.peak, 'peak')
+  const offPeak = periodCostMicros(price, row, row.peak) - peak
+  return { peak, offPeak, total: peak + offPeak }
 }
 
 /**
@@ -104,7 +171,7 @@ export const CostPill = memo(function CostPill({ useProjection, useCostSettings,
   if (projection.models.length === 0) return null
   if (settings.status === 'unavailable') return null
 
-  const totalText = formatCostMicros(live.totalMicros, settings.currency)
+  const totalText = formatCostMicros(live.totalMicros)
   const unpricedNote = live.unpriced.length > 0
 
   const toggle = (): void => {
@@ -171,7 +238,7 @@ export const CostPill = memo(function CostPill({ useProjection, useCostSettings,
                           const micros = rowCostMicros(row, settings.table)
                           return micros === null
                             ? <span className={css.unpriced}>{t('pill.unpriced')}</span>
-                            : formatCostMicros(micros, settings.currency)
+                            : formatCostMicros(micros)
                         })()}
                       </td>
                     </tr>

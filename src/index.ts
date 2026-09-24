@@ -1,11 +1,12 @@
 /**
- * dsh-cost host plugin: per-model token price configuration and the `cost`
- * session projection. The fold replays durable usage events into per-model
- * token buckets; the client view prices them against the configured table.
+ * dsh-cost host plugin: the `cost` session projection over the plugin's
+ * bundled price table. The fold replays durable usage events into per-model
+ * token buckets (split by billing period for prices with an off-peak row);
+ * the client view prices those buckets against the table.
  *
- * Configuration resolves from the composition entry, then the `dsh-cost`
- * settings namespace when a settings service is mounted, so price edits in
- * the web UI apply without a restart.
+ * Prices ship with the plugin. The `dsh-cost` settings namespace exists for
+ * the settings card (and for a composition that needs to price a model the
+ * bundle does not list); nothing in the web UI edits prices.
  *
  * @module dsh-cost
  */
@@ -15,23 +16,46 @@ import z from '@deepseek-ai/schemastery'
 import type {} from '@deepseek-ai/dsh-session-projection'
 import type {} from '@deepseek-ai/dsh-settings'
 import { COST_SETTINGS_NAMESPACE, type Config as ConfigShape } from './config.ts'
+import { CostBackfill, CostBackfillService } from './backfill.ts'
 import { costProjectionDefinition } from './projection.ts'
 import { effectivePriceTable, type ResolvedPrices } from './pricing.ts'
 
 export { COST_SETTINGS_NAMESPACE } from './config.ts'
+export { CostBackfill, CostBackfillService } from './backfill.ts'
+export type { BackfillReport } from './backfill.ts'
 export { costProjectionDefinition } from './projection.ts'
 export type { CostModelBreakdown, CostProjection, CostState } from './projection-types.ts'
 export {
   bucketsCostMicros,
+  bucketsCostSplitMicros,
+  BUILTIN_PRICES,
+  CHINA_PUBLIC_HOLIDAYS,
+  DEEPSEEK_PRICES,
   effectivePriceTable,
   formatCostMicros,
   formatTokens,
+  PEAK_WINDOWS,
+  periodCostMicros,
+  periodCostSplitMicros,
+  periodOf,
+  PRICE_CURRENCY,
   resolvePrice,
   selectRate,
+  subtractBuckets,
   usageCostMicros,
+  usageCostSplitMicros,
   ZEN_PRESETS,
 } from './pricing.ts'
-export type { ModelPrice, ModelPriceTier, PriceTable, ResolvedPrices, TokenBuckets } from './pricing.ts'
+export type {
+  CostSplit,
+  CostSplitTotal,
+  ModelPrice,
+  ModelPriceTier,
+  PricePeriod,
+  PriceTable,
+  ResolvedPrices,
+  TokenBuckets,
+} from './pricing.ts'
 
 /** Cordis plugin name used by loader diagnostics. */
 export const name = 'dsh-cost'
@@ -50,12 +74,10 @@ const priceFields = {
   cacheWrite: z.number().min(0),
 }
 
-/** Plugin config (all optional — schema defaults supply a usable table). */
+/** Plugin config (all optional — the bundled table needs no configuration). */
 export type Config = ConfigShape
 
 export const Config: z<ConfigShape> = z.object({
-  currency: z.string().default('USD'),
-  presets: z.boolean().default(true),
   models: z.dict(z.object({
     ...priceFields,
     /** Per-request tiers: the highest tier whose `above` the request's billed input exceeds wins. */
@@ -63,7 +85,11 @@ export const Config: z<ConfigShape> = z.object({
       above: z.natural(),
       ...priceFields,
     })),
+    /** Discounted rates billed outside the peak windows (DeepSeek-style off-peak). */
+    offPeak: z.object(priceFields).description('off-peak rates'),
   })).default({}),
+  holidays: z.array(z.string()).default([]),
+  backfill: z.boolean().default(true),
 })
 
 /**
@@ -93,11 +119,19 @@ export function apply(ctx: Context, config: ConfigShape): void {
     if (cached !== undefined && cachedFor === section) return cached
     cachedFor = section
     cached = {
-      currency: section.currency ?? 'USD',
-      table: effectivePriceTable(section.presets ?? true, section.models),
+      table: effectivePriceTable(section.models),
+      holidays: section.holidays ?? [],
     }
     return cached
   }
 
   ctx.sessionProjections.register(costProjectionDefinition(prices))
+
+  // The Remote stays mounted even when the background sweep is disabled, so
+  // the settings card's refresh button always folds on demand.
+  const backfill = new CostBackfill(ctx)
+  new CostBackfillService(ctx, backfill)
+  if (config.backfill ?? true) {
+    ctx.effect(() => backfill.startBackground(), 'dsh-cost: history backfill')
+  }
 }

@@ -37,14 +37,6 @@
   color: var(--text-3, #8b8f98);
 }
 
-.pending {
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--warning-bg, rgba(217, 119, 6, 0.12));
-  color: var(--warning, #d97706);
-  font-size: 11px;
-}
-
 .chevron {
   transition: transform 0.15s ease;
 }
@@ -59,44 +51,6 @@
   border-top: 1px solid var(--line-1, rgba(0, 0, 0, 0.08));
 }
 
-.readOnly {
-  margin: 8px 0;
-  color: var(--warning, #d97706);
-  font-size: 12px;
-}
-
-.fieldRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 10px 0;
-  flex-wrap: wrap;
-}
-
-.fieldLabel {
-  font-size: 12px;
-  color: var(--text-2, #5c6068);
-}
-
-.currencyInput {
-  width: 72px;
-  padding: 4px 8px;
-  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
-  border-radius: 6px;
-  font-size: 12px;
-  background: var(--bg-2, #fff);
-  color: var(--text-1, #1f2329);
-}
-
-.presetsLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-1, #1f2329);
-  cursor: pointer;
-}
-
 .modelsTitle {
   margin: 12px 0 6px;
   font-size: 12px;
@@ -104,117 +58,63 @@
   color: var(--text-2, #5c6068);
 }
 
-.editor {
+/* ── bundled price table (read-only) ───────────────────────────────── */
+
+.prices {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
-.editor th {
+.prices th {
   text-align: left;
   font-weight: 500;
   color: var(--text-3, #8b8f98);
-  padding: 4px 4px;
+  padding: 4px 6px;
   white-space: nowrap;
 }
 
-.editor td {
-  padding: 2px 4px;
-}
-
-.editor input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 4px 6px;
-  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
-  border-radius: 6px;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  background: var(--bg-2, #fff);
+.prices td {
+  padding: 3px 6px;
+  border-top: 1px solid var(--line-1, rgba(0, 0, 0, 0.06));
   color: var(--text-1, #1f2329);
 }
 
-.keyInput {
-  min-width: 160px;
-}
-
-.priceInput {
-  max-width: 84px;
-}
-
-.tiersInput {
-  min-width: 140px;
-}
-
-.rowInvalid input {
-  border-color: var(--danger, #dc2626);
-}
-
-.removeButton,
-.addButton {
-  padding: 3px 10px;
-  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
-  border-radius: 6px;
-  background: transparent;
+.priceKey {
   color: var(--text-2, #5c6068);
-  font-size: 12px;
-  cursor: pointer;
   white-space: nowrap;
 }
 
-.addButton {
+.offPeakRow td {
+  color: var(--text-3, #8b8f98);
+  border-top: none;
+  padding-top: 0;
+}
+
+.configuredMark {
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+  color: var(--text-3, #8b8f98);
+  font-size: 11px;
+}
+
+.priceFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 8px;
 }
 
-.removeButton:hover,
-.addButton:hover {
-  background: var(--fill-2, rgba(0, 0, 0, 0.06));
-}
-
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.discard,
-.resetButton,
-.save {
-  padding: 5px 14px;
-  border-radius: 6px;
+.priceUnit {
   font-size: 12px;
-  cursor: pointer;
+  color: var(--text-3, #8b8f98);
 }
 
-.discard,
-.resetButton {
-  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
-  background: transparent;
-  color: var(--text-2, #5c6068);
-}
-
-.resetButton {
-  margin-right: auto;
-}
-
-.save {
-  border: none;
-  background: var(--primary, #4f46e5);
-  color: #fff;
-}
-
-.save:disabled,
-.discard:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.failed {
-  margin: 6px 0 0;
-  color: var(--danger, #dc2626);
-  font-size: 12px;
+.priceFilterLabel {
+  margin-left: auto;
 }
 
 .rule {
@@ -246,10 +146,31 @@
 
 .history {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   margin-top: 6px;
+}
+
+.colExpander {
+  width: 26px;
+}
+
+.colModels {
+  width: 108px;
+}
+
+.colUpdated {
+  width: 106px;
+}
+
+.colTokens {
+  width: 62px;
+}
+
+.colCost {
+  width: 84px;
 }
 
 .history th {
@@ -260,17 +181,224 @@
   white-space: nowrap;
 }
 
-.history th:nth-child(n + 2),
-.history td:nth-child(n + 2) {
-  text-align: right;
-}
-
 .history td {
   padding: 4px 6px;
 }
 
+.num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 2px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  color: var(--text-2, #5c6068);
+  white-space: nowrap;
+}
+
+.filterSelect {
+  max-width: 220px;
+  padding: 3px 6px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--bg-2, #fff);
+  color: var(--text-1, #1f2329);
+}
+
+.refreshButton {
+  margin-left: auto;
+  padding: 3px 10px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2, #5c6068);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.refreshButton:hover {
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+}
+
+.moreHint {
+  margin: 6px 0 2px;
+  font-size: 12px;
+  color: var(--warning, #d97706);
+}
+
+/* The refresh sweep's own report: neutral while it succeeded, warning otherwise. */
+.refreshReport {
+  margin: 6px 0 2px;
+  font-size: 12px;
+  color: var(--text-3, #8b8f98);
+  font-variant-numeric: tabular-nums;
+}
+
+.pageSizeLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: auto;
+  font-size: 12px;
+  color: var(--text-3, #8b8f98);
+}
+
+.modelsExplain {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-3, #8b8f98);
+}
+
+.splitSummary {
+  margin: 6px 0 2px;
+  font-size: 12px;
+  color: var(--text-3, #8b8f98);
+  font-variant-numeric: tabular-nums;
+}
+
+.expanderCell {
+  width: 24px;
+  padding-right: 0 !important;
+}
+
+.expander {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-3, #8b8f98);
+  cursor: pointer;
+  padding: 0;
+}
+
+.expander:hover {
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+}
+
+.modelsCell {
+  overflow: hidden;
+}
+
+.modelBadge {
+  display: inline-block;
+  margin: 1px 4px 1px 0;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+  color: var(--text-2, #5c6068);
+  font-size: 11px;
+  line-height: 18px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.detailRow > td {
+  padding: 2px 6px 10px 30px;
+  background: var(--fill-1, rgba(0, 0, 0, 0.02));
+}
+
+.detail {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-3, #8b8f98);
+  padding: 3px 6px;
+  white-space: nowrap;
+}
+
+.detail td {
+  padding: 3px 6px;
+  vertical-align: top;
+}
+
+.detailModel {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cellTokens {
+  display: block;
+  font-size: 11px;
+  color: var(--text-3, #8b8f98);
+}
+
+.dash {
+  color: var(--text-3, #8b8f98);
+}
+
+.tieredMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--fill-2, rgba(0, 0, 0, 0.08));
+  color: var(--text-3, #8b8f98);
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.pageButton {
+  padding: 3px 10px;
+  border: 1px solid var(--line-2, rgba(0, 0, 0, 0.12));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2, #5c6068);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: var(--fill-2, rgba(0, 0, 0, 0.06));
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pageStatus {
+  font-size: 12px;
+  color: var(--text-3, #8b8f98);
+  font-variant-numeric: tabular-nums;
+}
+
 .sessionCell {
-  max-width: 260px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -310,4 +438,9 @@
 
 .costCell {
   font-weight: 500;
+}
+
+.unpriced {
+  color: var(--warning, #d97706);
+  font-size: 11px;
 }
